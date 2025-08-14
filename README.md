@@ -1,9 +1,11 @@
-[![Test Measles Simulation Scripts](https://github.com/utahhhs/abm-measles/actions/workflows/test-simulation.yml/badge.svg)](https://github.com/utahhhs/abm-measles/actions/workflows/test-simulation.yml)
+[![Test Measles Simulation Scripts](https://github.com/EpiForeSITE/measles-school-letters/actions/workflows/test-simulation.yml/badge.svg)](https://github.com/EpiForeSITE/measles-school-letters/actions/workflows/test-simulation.yml)
 
-# Measles School Simulation Template
+# Measles School Simulation Template[^original]
+
+[^original]: This template is based on the original joint work by the Utah Department of Health and the University of Utah with support from the CDC.
 
 > [!CAUTION]
-> The code and model are still under development. We would love to hear your feedback and suggestions. Please open an issue in the [GitHub repository](https://github.com/utahhhs/abm-measles) if you have any questions or suggestions.
+> The code and model are still under development. We would love to hear your feedback and suggestions. Please open an issue in the [GitHub repository](https://github.com/EpiForeSITE/measles-school-letters) if you have any questions or suggestions.
 
 This repository contains a template for conducting measles outbreak scenario modeling for schools. The code provides tools to simulate disease spread under different vaccination rates and intervention scenarios.
 
@@ -178,3 +180,7 @@ The repository includes GitHub Actions CI that:
 
 The CI uses a Docker container with R and required packages, demonstrating the complete workflow from data input to final reports.
 
+
+## Acknowledgements
+
+This was made possible by cooperative agreement CDC-RFA-FT-23-0069 from the CDC’s Center for Forecasting and Outbreak Analytics. Its contents are solely the responsibility of the authors and do not necessarily represent the official views of the Centers for Disease Control and Prevention.
