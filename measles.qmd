@@ -1,0 +1,112 @@
+---
+format: 
+  docx: 
+    reference-doc: letter_head.docx
+    documentclass: article
+    includes:
+      in_header: preamble.tex
+  
+execute: 
+  echo: false
+  warning: false
+  message: false
+params:
+  school_id: "SCHOOL_001"
+---
+
+```{r}
+#| label: setup
+knitr::opts_chunk$set(echo = FALSE)
+library(dplyr)
+library(stringr)
+```
+
+```{r}
+#| label: load_data
+results <- read.csv("simulation_data.csv") |>
+  subset(id == params$school_id)
+
+# Add take-home message
+population <- results$pop_size
+prevalence <- results$vax_rate
+
+# Load appropriate data file based on environment
+# Loading the school data (checking if test data is used)
+test_data <- ifelse(
+  Sys.getenv("TEST_DATA", "FALSE") == "TRUE",
+  "./test_school_vax_data.csv",
+  ""
+  )
+
+data_file <- ifelse(
+  file.exists(test_data),
+  test_data,
+  "school_vax_data.csv"
+)
+
+K_12_2ndMMR_data_set_for_2024_25 <- read.csv(
+  data_file,
+  comment.char = "#"
+  )
+
+clean_data <-  K_12_2ndMMR_data_set_for_2024_25 %>%
+  group_by(r_school_code) %>%
+  mutate(Grade_level_new = ifelse(n_distinct(Grade_level) > 1,
+                                 "School", first(Grade_level)),
+         SchoolID = first(SchoolID)) %>%
+  ungroup() %>%
+  mutate(name = str_to_title(Name),
+         id_new = sprintf("%s_%s_%s", `SchoolID`, r_school_code, Grade_level_new)) %>%
+  subset(id_new == params$school_id)
+
+```
+
+# Measles Estimation for `r results$name`
+
+We hope this letter finds you well. As the school year starts we wanted to give you some information about how many students in your school are protected against measles. To create this estimate we used the data that your school provided related to MMR vaccination levels in 2024-2025 (see a summary of data you provided at end of document). Based on this information, **`r round(prevalence * 100, 1)`% of the `r population` students at your school have received the 2 recommended doses of the MMR vaccine.** Without any additional action, and using mathematical simulation, if someone with measles were to come to your school, **on average `r round(results$no_quarantine_mean_cases)` children could become infected, `r round(results$no_quarantine_mean_hosp)` of whom could be hospitalized.** Protective measures, including preventing unvaccinated, exposed children from coming to school for the days after their exposure, could drop these numbers to **`r round(results$quarantine_mean_cases)` infections and `r round(results$quarantine_mean_hosp)` hospitalizations.** While these numbers are a result of mathematical modeling, they are a realistic estimation of the risk in your school.
+
+Vaccination is the most effective way to protect people from measles. We understand that some members of the community may have concerns about vaccinations. Our goal is to provide accurate information and support informed decisions. The MMR vaccine is safe and effective, and it plays a crucial role in protecting our children and community from serious diseases. **Your school's MMR vaccination level falls below the recommended 95% MMR coverage that is needed to prevent measles spread.** Now, at the beginning of the school year, we suggest your school makes every effort to work with families and local vaccine providers to get students completely caught up on MMR vaccination and protected against measles.
+
+In addition to increasing vaccination now, it is important to plan how your school will respond to a measles exposure. Important immediate actions include:
+
+1)  **Vaccinating exposed individuals.** Vaccine can prevent illness even if given after the person has been exposed to measles as long as it’s given within 3 days. We strongly encourage you to work with your local health department to identify all students who are unvaccinated and offer them the MMR vaccine.
+
+2)  **Reducing transmission by limiting contacts with those who are sick or may be sick with measles.** It is recommended that students and staff with measles stay home until 4 days after rash onset to prevent them spreading the infection to others. Additionally, unvaccinated contacts are recommended to stay home for 21 days after any contagious child is in school.
+
+Thank you for your attention to this important matter. Together, we can ensure a safe and healthy environment for our students. If you have any questions or need further information, feel free to contact us.
+
+
+## Table 1. Estimated Results
+
+
+```{r}
+library(flextable)
+library(dplyr)
+
+model_est_summary <- data.frame(
+  results$pop_size,
+  percent_vax = round(results$vax_rate*100, 1),
+  round(results$no_quarantine_mean_cases, 1),
+  round(results$no_quarantine_mean_hosp, 1),
+  round(results$quarantine_mean_cases, 1),
+  round(results$quarantine_mean_hosp, 1)
+)
+
+colnames(model_est_summary) <- c(
+  "Total population", 
+  "% MMR Vaccination", 
+  "Cases without \nquarantine",
+  "Hospitalizations \nwithout \nquarantine",
+  "Cases with \nquarantine",
+  "Hospitalizations \nwith \nquarantine"
+)
+
+flextable(model_est_summary) %>%
+  fontsize(size = 10, part = "all") %>%
+  font(fontname = "Times New Roman", part = "all") %>%
+  autofit(add_w = .12,
+          unit = "in") %>%
+  theme_booktabs()
+
+```
+

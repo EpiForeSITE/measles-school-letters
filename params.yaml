@@ -1,0 +1,26 @@
+Population size: 190.0
+Contact rate: 3.79
+Quarantine willingness: 1.0
+Prevalence: 1
+Incubation period: 12.0
+Days undetected: 2.0
+Prodromal period: 3.0
+Quarantine days: 21.0
+Rash period: 4.0
+Transmission rate: 0.9
+Hospitalization rate: 0.2
+Hospitalization days: 7
+Isolation days: 4
+Vaccination rate: 0.4210526
+Vax improved recovery: 0.5
+# Source https://www.cdc.gov/measles/about/questions.html
+Vax efficacy: 0.97
+initial number of exposed: 1.0
+Seed: 2023
+N days: 100
+Replicates: 500
+Threads: 2
+R0: 15
+school_name: Example School
+format:
+  mainfont: Open Sans
