@@ -1,0 +1,27 @@
+# Ignoring microsoft files
+# Ignore all files with the .docx extension
+*.docx
+# Ignore all files with the .xlsx extension
+*.xlsx
+# Ignore all files with the .pptx extension
+*.pptx
+
+# Ignore all files with the .doc extension
+*.doc
+# Ignore all files with the .xls extension
+*.xls
+# Ignore all files with the .ppt extension
+*.ppt
+
+# Avoiding all files with the .pdf extension
+*.pdf
+
+# Ignoring csv files (except test data)
+*.csv
+!test_school_data.csv
+.Rproj.user
+
+# Ignoring R projects, data, and history
+*.Rhistory
+*.rda
+*.RData

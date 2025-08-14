@@ -1,0 +1,87 @@
+name: Test Measles Simulation Scripts
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test-simulation:
+    runs-on: ubuntu-latest
+    container:
+      image: rocker/tidyverse:4.5.1
+
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Downloading epiworldR repo
+      uses: actions/checkout@v4
+      with:
+        repository: UofUEpiBio/epiworldR
+        ref: patch-rename-measlesmodel
+        path: epiworldr-repo
+
+    - name: Install R packages (epiworldR and quarto)
+      run: |
+        R CMD build --no-build-vignettes --no-manual epiworldr-repo
+        R CMD INSTALL epiworldR*.tar.gz
+        install2.r quarto flextable
+    
+    - name: Run the simulations
+      id: simulation
+      run: |
+        TEST_DATA=TRUE END=" " make clean_all sims
+
+    - name: Check if it generated the data
+      run: |
+        if [ ! -f "simulation_data.csv" ]; then
+          echo "✗ simulation_data.csv not found"
+          exit 1
+        fi
+        if [ ! -f "simulation_data.rds" ]; then
+          echo "✗ simulation_data.rds not found"
+          exit 1
+        fi
+        echo "✓ Simulation data files found"
+
+    - name: Run the reports
+      id: reports
+      run: |
+        TEST_DATA=TRUE END=" " make reports
+
+    - name: Check report files
+      run: |
+        # If there are no docx files under reports/*/ then fail
+        if [ -z "$(find reports -name '*.docx')" ]; then
+          echo "✗ No report files found"
+          exit 1
+        fi
+        echo "✓ Report files found"
+
+    # Uploading artifacts if any failed
+    - name: Listing all files
+      if: always()
+      run: |
+        echo "Listing all files:"
+        ls -R
+        
+    - name: Upload simulation data
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: logfiles
+        path: |
+          *.Rout
+          01-generate_reports_errors.rds
+        retention-days: 7
+
+    - name: Summary
+      run: |
+        echo "🎉 All tests passed!"
+        echo "✓ Simulation data generation works with synthetic data"
+        echo "✓ Report generation can process simulation output"
