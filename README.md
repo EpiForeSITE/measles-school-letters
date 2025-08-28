@@ -1,184 +1,158 @@
-[![Test Measles Simulation Scripts](https://github.com/EpiForeSITE/measles-school-letters/actions/workflows/test-simulation.yml/badge.svg)](https://github.com/EpiForeSITE/measles-school-letters/actions/workflows/test-simulation.yml)
-
 # Measles School Simulation Template[^original]
+
+[![Test Measles Simulation Scripts](https://github.com/EpiForeSITE/measles-school-letters/actions/workflows/test-simulation.yml/badge.svg)](https://github.com/EpiForeSITE/measles-school-letters/actions/workflows/test-simulation.yml)
 
 [^original]: This template is based on the original joint work by the Utah Department of Health and the University of Utah with support from the CDC.
 
 > [!CAUTION]
 > The code and model are still under development. We would love to hear your feedback and suggestions. Please open an issue in the [GitHub repository](https://github.com/EpiForeSITE/measles-school-letters) if you have any questions or suggestions.
 
-This repository contains a template for conducting measles outbreak scenario modeling for schools. The code provides tools to simulate disease spread under different vaccination rates and intervention scenarios.
+## Overview
 
-## Getting Started
+This repository provides a template for conducting measles outbreak scenario modeling for schools. It helps public health officials and researchers simulate disease spread under different vaccination rates and intervention scenarios, generating customized reports for individual schools.
 
-### For Testing/Demonstration (Using Synthetic Data)
+**What this tool does:**
+- Simulates measles outbreaks in school settings based on vaccination data
+- Compares scenarios with and without quarantine interventions
+- Generates professional Word document reports for each school
+- Provides probability estimates for different outbreak sizes
+- Includes hospitalization projections and recommendations
 
-To test the repository with synthetic data:
+**Who can use this:**
+- Public health departments
+- School administrators
+- Epidemiologists and researchers
+- Anyone needing measles outbreak risk assessments for schools
 
-```bash
-TEST_DATA=TRUE make sims
-TEST_DATA=TRUE make reports
-```
+## Quick Start
 
-This uses the included `test_school_vax_data.csv` with 3 synthetic schools (~500 students each, 80% vaccination rate).
+### Testing the System (Recommended First Step)
 
-### For Production Use
-
-1. **Replace data file**: Create `school_vax_data.csv` with your actual school vaccination data (see format requirements below)
-
-2. **Replace letterhead**: Replace `letter_head.docx` with your organization's letterhead template
-
-3. **Run the simulation and report generation**:
-
-    ```bash
-    make sims
-    make reports
-    ```
-
-    Or manually run the scripts in sequence:
-
-    ```bash
-    R CMD BATCH 00-simulation_data.R 00-simulation_data.Rout
-    R CMD BATCH 01-generate_reports.R 01-generate_reports.Rout
-    ```
-
-For testing with synthetic data, you can set the environment variable `TEST_DATA=TRUE`:
+Try the system with included synthetic data to understand how it works:
 
 ```bash
 TEST_DATA=TRUE make sims
 TEST_DATA=TRUE make reports
 ```
 
-### Required Data Format
+This will create example reports using 3 synthetic schools. Check the `reports/` folder for generated Word documents.
 
-Your production CSV file must be named `school_vax_data.csv` and contain these columns:
-- `SchoolID`: Unique identifier for the school
-- `Name`: School name
-- `enrolled_students`: Total number of enrolled students
-- `Students up to date with MMR`: Number of students with up-to-date MMR vaccination
-- `Grade_level`: Grade level (Elementary, Middle, High, or School for mixed)
-- `school_district`: Name of the school district
-- `Health District`: Name of the health district
-- `PUBLIC/PRIVATE`: School type
-- `Chartered?`: Whether school is chartered (Yes/No)
-- `inperson/online`: Learning mode ("In person or hybrid" for in-person schools)
-- `Address`, `City`, `Zip Code`, `County`: Location information
-- `r_school_code`: School code for reference
+### Using Your Own Data
 
-**Note**: The file can include comments (lines starting with `#`) which will be ignored when loaded into R.
+1. **Prepare your data**: Create `school_vax_data.csv` with your school vaccination data ([see format requirements](docs/details.md#required-input-data-format))
+2. **Add your letterhead**: Replace `letter_head.docx` with your organization's template
+3. **Run the analysis**:
+   ```bash
+   make sims
+   make reports
+   ```
 
-### Required Template File
+Your custom reports will be saved in the `reports/` directory.
 
-Your production letterhead template must be named `letter_head.docx` and should contain your organization's official letterhead formatting.
+## How It Works
 
-## Repository Structure
+The system works in two main steps:
 
-### Main Scripts
-- [`00-simulation_data.R`](00-simulation_data.R) - **Main simulation script**. Runs the measles outbreak simulations for each school and saves results. **Run this script first.**
-  - Uses [`params.yaml`](params.yaml) - Model parameters for the simulations
-  - Reads either `school_vax_data.csv` (production) or `test_school_vax_data.csv` (testing) based on `TEST_DATA` environment variable
-  - Generates [`simulation_data.csv`](simulation_data.csv) - Simulation results in CSV format
-  - Generates [`simulation_data.rds`](simulation_data.rds) - Same results in R data format
+1. **Simulation**: Analyzes your school data and runs epidemiological models to simulate potential measles outbreaks
+2. **Report Generation**: Creates professional Word documents with school-specific results and recommendations
 
-- [`01-generate_reports.R`](01-generate_reports.R) - **Report generation script**. Creates individual Word document reports for each school. **Run this after generating simulation data.**
-  - Uses [`measles.qmd`](measles.qmd) - Quarto template for generating reports
-  - Uses [`letter_head.docx`](letter_head.docx) - Word template with your organization's letterhead
-  - Outputs reports to [`reports/`](reports/) directory, organized by health district
+Each report includes:
+- Risk assessment based on current vaccination rates
+- Comparison of outbreak scenarios with and without quarantine measures  
+- Probability tables for different outbreak sizes
+- Hospitalization estimates
+- Actionable recommendations for school administrators
 
-- [`02-split_simulated_LHD.R`](02-split_simulated_LHD.R) - **Optional utility script**. Splits simulation data by health district and saves as separate CSV files
+For technical details about the workflow, data formats, and implementation, see our [technical documentation](docs/details.md).
 
-### Required Input Files
+## Using the Makefile
 
-- **`school_vax_data.csv`** - Your school vaccination data (production use)
-- **`test_school_vax_data.csv`** - Synthetic test data with 3 schools (included for testing)
-- **`letter_head.docx`** - Your organization's letterhead template (replace for production use)
+This repository includes a Makefile to simplify common tasks. **Note**: GNU Make is not required - you can run the R scripts directly if preferred.
 
-### Supporting Files
+### With Make (Recommended)
 
-- [`scripts/`](scripts/) - Supporting R functions
-  - [`scripts/model_functions.R`](scripts/model_functions.R) - Core epidemiological model functions
-  - [`scripts/docx_edit.R`](scripts/docx_edit.R) - Functions to edit Word documents and highlight key statistics in red and bold
+```bash
+# Generate simulation data
+make sims
 
-- [`reports/`](reports/) - Output directory for generated reports (see [reports/README.md](reports/README.md) for details)
+# Generate reports from simulation data  
+make reports
 
-- [`Makefile`](Makefile) - Build automation with targets: `sims`, `reports`, `clean_reports`, `clean_sims`, `clean_all`
+# Clean up generated files
+make clean_all
 
-## How the System Works
-
-### 1. Data Loading and Environment Detection
-
-The system automatically detects whether to use test or production data:
-
-- **Test mode**: When `TEST_DATA=TRUE`, uses `test_school_vax_data.csv` (3 synthetic schools)
-- **Production mode**: When `TEST_DATA` is unset or `FALSE`, uses `school_vax_data.csv` (your real data)
-
-### 2. Simulation Process
-
-```mermaid
-flowchart TD
-    A[Load school data] --> B[Clean and aggregate by school]
-    B --> C[Filter schools >10 students, >30% vax rate]
-    C --> D[Run measles simulations for each school]
-    D --> E[Save results to simulation_data.csv]
+# See all available commands
+make help
 ```
 
-The simulation runs multiple scenarios for each school:
-- **Without quarantine**: Natural outbreak progression
-- **With quarantine**: 21-day quarantine for unvaccinated exposed students
+### Without Make (Alternative)
 
-### 3. Report Generation Process
+If you don't have Make installed or prefer to run scripts directly:
 
-```mermaid
-flowchart TD
-    A[Read simulation_data.csv] --> B[For each school]
-    B --> C[Create temporary working directory]
-    C --> D[Copy required files:<br/>measles.qmd, letter_head.docx,<br/>simulation data, etc.]
-    D --> E[Render Quarto report to Word]
-    E --> F[Apply text formatting:<br/>highlight key numbers in red/bold]
-    F --> G[Move report to final location<br/>in reports/ directory]
-    G --> H[Organize by health district<br/>if specified]
+```bash
+# Generate simulation data
+R CMD BATCH 00-simulation_data.R 00-simulation_data.Rout
+
+# Generate reports
+R CMD BATCH 01-generate_reports.R 01-generate_reports.Rout
 ```
 
-### 4. Output Organization
+Both approaches produce identical results - choose whichever is more convenient for your setup.
 
-Reports are saved in the `reports/` directory:
-- **With health districts**: `reports/{health_district_name}/{school_id}.docx`
-- **Without health districts**: `reports/{school_id}.docx`
+## Repository Contents
 
-## Simulation Data Output Format
+### Main Files
+- `00-simulation_data.R` - Runs outbreak simulations for each school
+- `01-generate_reports.R` - Creates individual Word reports
+- `02-split_simulated_LHD.R` - Splits results by health district (optional)
+- `params.yaml` - Model configuration parameters
+- `measles.qmd` - Report template
+- `letter_head.docx` - Your organization's letterhead (replace for production)
 
-The `simulation_data.csv` file contains all the data needed to generate reports. Each row represents one school with the following columns:
+### Data Files
+- `school_vax_data.csv` - Your school vaccination data (you provide this)
+- `test_school_vax_data.csv` - Synthetic test data (included)
 
-- `id`: School identifier (format: `{SchoolID}_{r_school_code}_{Grade_level}`)
-- `name`: School name
-- `health_district`: Health district name (used for report organization)
-- `letter_head`: Letterhead template filename (currently not used - defaults to `letter_head.docx`)
-- `vax_rate`: Vaccination rate (0-1 scale)
-- `pop_size`: School population size
-- `no_quarantine_mean_cases`: Average number of cases without quarantine intervention
-- `no_quarantine_mean_hosp`: Average number of hospitalizations without quarantine
-- `quarantine_mean_cases`: Average number of cases with quarantine intervention  
-- `quarantine_mean_hosp`: Average number of hospitalizations with quarantine
+### Generated Output
+- `simulation_data.csv` - Simulation results
+- `reports/` - Generated Word document reports
 
-## Available Make Targets
+### Documentation
+- [`docs/`](docs/) - Technical documentation and requirements
+- [`reports/README.md`](reports/README.md) - Information about generated reports
 
-Use these commands for common tasks:
+For detailed descriptions of what each script does and technical implementation details, see [`docs/details.md`](docs/details.md).
 
-- `make sims` - Generate simulation data
-- `make reports` - Generate Word document reports
-- `make clean_reports` - Remove all generated reports
-- `make clean_sims` - Remove simulation data files
-- `make clean_all` - Remove all generated files
-- `make help` - Show available targets
+## Requirements
 
-## Testing and CI
+- R 4.0 or later
+- Required R packages (see [`docs/requirements.md`](docs/requirements.md) for complete list)
+- Quarto for report generation
+- Optional: GNU Make for build automation
 
-The repository includes GitHub Actions CI that:
-1. Tests simulation data generation with synthetic data (`TEST_DATA=TRUE`)
-2. Validates report generation process
-3. Ensures all outputs are created successfully
+For detailed technical requirements and installation instructions, see [`docs/requirements.md`](docs/requirements.md).
 
-The CI uses a Docker container with R and required packages, demonstrating the complete workflow from data input to final reports.
+## Need Help Running Simulations?
+
+**We're here to help!** If your public health department, school district, or organization needs measles outbreak risk assessments but lacks the technical resources or expertise to run this analysis, we can assist you.
+
+We offer:
+- Running simulations with your data
+- Customizing reports for your specific needs  
+- Training on using the tools
+- Technical support and consultation
+
+**Contact us** through this repository's issues or reach out to discuss how we can support your public health response efforts.
+
+## Documentation
+
+- **[`docs/requirements.md`](docs/requirements.md)** - Technical requirements and installation
+- **[`docs/details.md`](docs/details.md)** - Technical implementation details and workflow
+- **[`docs/README.md`](docs/README.md)** - Documentation overview
+
+## Testing
+
+The repository includes automated testing via GitHub Actions to ensure all components work correctly. The test suite validates both simulation and report generation using synthetic data.
 
 
 ## Acknowledgements

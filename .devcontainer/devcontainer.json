@@ -1,0 +1,35 @@
+{
+  "name": "Measles School Simulation Template",
+  "build": {
+    "dockerfile": "Containerfile"
+  },
+  "features": {},
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "REditorSupport.r",
+        "quarto.quarto",
+        "ms-vscode.vscode-json",
+        "redhat.vscode-yaml",
+        "ms-toolsai.jupyter"
+      ],
+      "settings": {
+        "r.rterm.linux": "/usr/local/bin/R",
+        "r.rpath.linux": "/usr/local/bin/R",
+        "r.rterm.option": [
+          "--no-save",
+          "--no-restore"
+        ]
+      }
+    }
+  },
+  "forwardPorts": [8787],
+  "portsAttributes": {
+    "8787": {
+      "label": "RStudio Server",
+      "onAutoForward": "notify"
+    }
+  },
+  "postCreateCommand": "echo 'DevContainer ready! You can access RStudio Server at http://localhost:8787 (username: rstudio, password: rstudio)'",
+  "remoteUser": "rstudio"
+}
