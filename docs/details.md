@@ -49,7 +49,7 @@ The system automatically detects whether to use test or production data:
 ### 2. Simulation Process
 
 ```mermaid
-flowchart TD
+flowchart LR
     A[Load school data] --> B[Clean and aggregate by school]
     B --> C[Filter schools >10 students, >30% vax rate]
     C --> D[Run measles simulations for each school]
@@ -81,7 +81,7 @@ The simulation supports parallel processing:
 ### 3. Report Generation Process
 
 ```mermaid
-flowchart TD
+flowchart LR
     A[Read simulation_data.csv] --> B[For each school]
     B --> C[Create temporary working directory]
     C --> D[Copy required files:<br/>measles.qmd, letter_head.docx,<br/>simulation data, etc.]

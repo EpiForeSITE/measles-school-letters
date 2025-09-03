@@ -91,10 +91,10 @@ If you don't have Make installed or prefer to run scripts directly:
 
 ```bash
 # Generate simulation data
-R CMD BATCH 00-simulation_data.R 00-simulation_data.Rout
+R CMD BATCH 00-simulation_data.R 00-simulation_data.Rout &
 
 # Generate reports
-R CMD BATCH 01-generate_reports.R 01-generate_reports.Rout
+R CMD BATCH 01-generate_reports.R 01-generate_reports.Rout &
 ```
 
 Both approaches produce identical results - choose whichever is more convenient for your setup.
@@ -117,12 +117,6 @@ Both approaches produce identical results - choose whichever is more convenient 
 - `simulation_data.csv` - Simulation results
 - `reports/` - Generated Word document reports
 
-### Documentation
-- [`docs/`](docs/) - Technical documentation and requirements
-- [`reports/README.md`](reports/README.md) - Information about generated reports
-
-For detailed descriptions of what each script does and technical implementation details, see [`docs/details.md`](docs/details.md).
-
 ## Requirements
 
 - R 4.0 or later
@@ -131,6 +125,8 @@ For detailed descriptions of what each script does and technical implementation 
 - Optional: GNU Make for build automation
 
 For detailed technical requirements and installation instructions, see [`docs/requirements.md`](docs/requirements.md).
+
+**Alternative: Development Container**: This repository includes a `.devcontainer` setup that provides a pre-configured environment with all dependencies. You can use this with GitHub Codespaces or VS Code Dev Containers for a quick start without local installation.
 
 ## Need Help Running Simulations?
 

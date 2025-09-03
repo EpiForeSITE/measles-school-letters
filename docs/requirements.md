@@ -52,9 +52,8 @@ The repository includes a devcontainer configuration that provides all dependenc
 
 3. **Install R packages**:
    ```r
-   # Install epiworldR (development version)
-   if (!require("remotes")) install.packages("remotes")
-   remotes::install_github("UofUEpiBio/epiworldR", ref = "patch-rename-measlesmodel")
+   ```r
+   install.packages('epiworldR', repos = c('https://uofuepibio.r-universe.dev', 'https://cloud.r-project.org'))
    
    # Install other packages
    install.packages(c("quarto", "flextable", "dplyr", "readr", "stringr", "ggplot2", "yaml"))

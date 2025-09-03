@@ -3,6 +3,10 @@
 # The code was originally developed by George V. Vega Yon
 # (with contributions by Andrew Pulsipher) and adapted
 # for this project by Josh Kelley and George V. Vega Yon.
+#
+# The functions presented here were originally posted in the epiworldRShiny 
+# package (https://github.com/UofUEpiBio/epiworldRShiny), which explains 
+# the way in which these were structured.
 
 library(epiworldR)
 library(ggplot2)
