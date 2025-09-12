@@ -138,7 +138,7 @@ We offer:
 - Training on using the tools
 - Technical support and consultation
 
-**Contact us** through this repository's issues or reach out to discuss how we can support your public health response efforts.
+**Contact us** through this repository's issues or reach out to discuss how we can support your public health response efforts at no cost.
 
 ## Documentation
 

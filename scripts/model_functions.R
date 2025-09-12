@@ -36,7 +36,8 @@ library(ggplot2)
 #'   - `Isolation days`: Integer, length of isolation period
 #' @param quarantine Logical, whether to enable quarantine interventions (default: TRUE)
 #'
-#' @return An epiworldR model object configured for measles simulation in schools
+#' @returns
+#' An epiworldR model object configured for measles simulation in schools
 #' @export
 model_builder <- function(input, quarantine = TRUE) {
   epiworldR::ModelMeaslesSchool(
