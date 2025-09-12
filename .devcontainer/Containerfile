@@ -1,0 +1,19 @@
+FROM rocker/tidyverse:4.5.1
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    git \
+    make \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install R packages
+RUN R -e "install.packages(c('quarto', 'flextable', 'yaml', 'remotes'))"
+
+# Install epiworldR from GitHub (development version)
+RUN R -e "remotes::install_github('UofUEpiBio/epiworldR', ref = 'patch-rename-measlesmodel')"
+
+# Set working directory
+WORKDIR /workspace
+
+# Expose RStudio port
+EXPOSE 8787
