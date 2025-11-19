@@ -65,12 +65,23 @@ school_mmr_data <- school_data %>%
     name = school_name,
     id_new = school_id,
     `Population size` = pop_size,
-    `Vaccination rate` = vax_rate,
-    # Optional: group for organizing reports (defaults to empty if not provided)
-    group = if ("group" %in% colnames(school_data)) group else "",
-    # Optional: template_path for custom letterhead (defaults to standard if not provided)
-    template_path = if ("template_path" %in% colnames(school_data)) template_path else "letter_head.docx"
-  ) %>%
+    `Vaccination rate` = vax_rate
+  )
+
+# Add optional columns if they exist
+if ("group" %in% colnames(school_data)) {
+  school_mmr_data$group <- school_data$group
+} else {
+  school_mmr_data$group <- ""
+}
+
+if ("template_path" %in% colnames(school_data)) {
+  school_mmr_data$template_path <- school_data$template_path
+} else {
+  school_mmr_data$template_path <- "letter_head.docx"
+}
+
+school_mmr_data <- school_mmr_data %>%
   select(id_new, name, `Population size`, `Vaccination rate`, group, template_path)
 
 # Checking that the ids are unique. If not, then throw an error
