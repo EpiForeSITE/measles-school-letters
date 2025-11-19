@@ -6,19 +6,24 @@ This document provides technical details about the Measles School Simulation Tem
 
 ### Required Input Data Format
 
-Your production CSV file must be named `school_vax_data.csv` and contain these columns:
-- `SchoolID`: Unique identifier for the school
-- `Name`: School name
-- `enrolled_students`: Total number of enrolled students
-- `Students up to date with MMR`: Number of students with up-to-date MMR vaccination
-- `Grade_level`: Grade level (Elementary, Middle, High, or School for mixed)
-- `school_district`: Name of the school district
-- `Health District`: Name of the health district
-- `PUBLIC/PRIVATE`: School type
-- `Chartered?`: Whether school is chartered (Yes/No)
-- `inperson/online`: Learning mode ("In person or hybrid" for in-person schools)
-- `Address`, `City`, `Zip Code`, `County`: Location information
-- `r_school_code`: School code for reference
+Your production CSV file must be named `school_vax_data.csv` and contain these required columns:
+
+- `school_name`: Name of the school
+- `school_id`: Unique identifier for the school
+- `vax_rate`: Vaccination rate (decimal between 0 and 1, e.g., 0.85 for 85%)
+- `pop_size`: Total number of students in the school
+
+Optional columns:
+- `group`: Group or district name (used to organize reports into subdirectories)
+- `template_path`: Path to a custom Word template letterhead (defaults to `letter_head.docx` if not provided)
+
+**Example CSV format:**
+```csv
+school_name,school_id,vax_rate,pop_size,group
+Lincoln Elementary,SCH001,0.85,450,North District
+Jefferson Middle School,SCH002,0.78,520,South District
+Washington High,SCH003,0.92,680,North District
+```
 
 **Note**: The file can include comments (lines starting with `#`) which will be ignored when loaded into R.
 
@@ -26,10 +31,10 @@ Your production CSV file must be named `school_vax_data.csv` and contain these c
 
 The `simulation_data.csv` file contains all the data needed to generate reports. Each row represents one school with the following columns:
 
-- `id`: School identifier (format: `{SchoolID}_{r_school_code}_{Grade_level}`)
+- `id`: School identifier (from the `school_id` column in input data)
 - `name`: School name
-- `health_district`: Health district name (used for report organization)
-- `letter_head`: Letterhead template filename (currently not used - defaults to `letter_head.docx`)
+- `group`: Group or district name (used for organizing reports into subdirectories)
+- `template_path`: Path to Word template letterhead
 - `vax_rate`: Vaccination rate (0-1 scale)
 - `pop_size`: School population size
 - `no_quarantine_mean_cases`: Average number of cases without quarantine intervention
@@ -46,12 +51,22 @@ The system automatically detects whether to use test or production data:
 - **Test mode**: When `TEST_DATA=TRUE`, uses `test_school_vax_data.csv` (3 synthetic schools)
 - **Production mode**: When `TEST_DATA` is unset or `FALSE`, uses `school_vax_data.csv` (your real data)
 
+The input data must contain these required columns:
+- `school_name`: School name
+- `school_id`: Unique identifier
+- `vax_rate`: Vaccination rate (0-1)
+- `pop_size`: Number of students
+
+And optionally:
+- `group`: For organizing reports by district/group
+- `template_path`: Custom letterhead template
+
 ### 2. Simulation Process
 
 ```mermaid
 flowchart LR
-    A[Load school data] --> B[Clean and aggregate by school]
-    B --> C[Filter schools >10 students, >30% vax rate]
+    A[Load school data] --> B[Validate required columns]
+    B --> C[Prepare data with optional columns]
     C --> D[Run measles simulations for each school]
     D --> E[Save results to simulation_data.csv]
 ```
@@ -99,20 +114,21 @@ flowchart LR
 4. **Post-processing**: Key statistics are highlighted in red and bold for emphasis
 5. **Organization**: Reports are organized by health district (if specified) or placed in the root reports directory
 
-### 4. Output Organization
+### Output Organization
 
 Reports are saved in the `reports/` directory:
-- **With health districts**: `reports/{health_district_name}/{school_id}.docx`
-- **Without health districts**: `reports/{school_id}.docx`
+- **With groups/districts**: `reports/{group_name}/{school_id}.docx`
+- **Without groups**: `reports/{school_id}.docx`
 
 ### 5. Script Descriptions
 
 #### Main Scripts
 
 - **`00-simulation_data.R`** - Main simulation script that:
-  - Loads and processes school vaccination data
-  - Filters schools by minimum population and vaccination thresholds
-  - Runs measles outbreak simulations for each qualifying school
+  - Loads and validates school vaccination data
+  - Ensures required columns are present (school_name, school_id, vax_rate, pop_size)
+  - Handles optional columns (group, template_path)
+  - Runs measles outbreak simulations for each school
   - Handles both test data (synthetic) and production data
   - Supports parallel processing for large datasets
   - Outputs results in both CSV and RDS formats
@@ -122,21 +138,23 @@ Reports are saved in the `reports/` directory:
   - Creates individual Word document reports for each school
   - Uses Quarto templates with school-specific parameter injection
   - Applies formatting to highlight key statistics
-  - Organizes reports by health district when specified
+  - Organizes reports by group/district when specified (using the `group` column)
+  - Supports custom letterhead templates via the `template_path` column
   - Handles both test and production data scenarios
 
 - **`02-split_simulated_LHD.R`** - Optional utility script that:
-  - Splits combined simulation data by health district
-  - Creates separate CSV files for each health district
+  - Splits combined simulation data by group/district (using the `group` column)
+  - Creates separate CSV files for each group
   - Useful for distributing results to different jurisdictions
+  - Note: For more advanced district-level features, see v1.0 release
 
 #### Supporting Scripts
 
 - **`scripts/model_functions.R`** - Core epidemiological modeling functions:
   - `model_builder()`: Configures epiworldR measles models
   - `shiny_measles()`: Orchestrates complete simulation workflow
-  - Helper functions for data processing and analysis
-  - Statistical analysis functions for outbreak probabilities
+  - Helper functions for data processing and statistical analysis
+  - Functions for calculating outbreak probabilities and hospitalization statistics
 
 - **`scripts/docx_edit.R`** - Document post-processing functions:
   - Functions to modify Word documents after Quarto rendering

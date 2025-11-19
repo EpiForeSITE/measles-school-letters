@@ -39,8 +39,8 @@ This will create example reports using 3 synthetic schools. Check the `reports/`
 
 ### Using Your Own Data
 
-1. **Prepare your data**: Create `school_vax_data.csv` with your school vaccination data ([see format requirements](docs/details.md#required-input-data-format))
-2. **Add your letterhead**: Replace `letter_head.docx` with your organization's template
+1. **Prepare your data**: Create `school_vax_data.csv` with required columns: `school_name`, `school_id`, `vax_rate`, `pop_size` ([see format details](docs/details.md#required-input-data-format))
+2. **Add your letterhead** (optional): Replace `letter_head.docx` with your organization's template
 3. **Run the analysis**:
    ```bash
    make sims
@@ -104,18 +104,20 @@ Both approaches produce identical results - choose whichever is more convenient 
 ### Main Files
 - `00-simulation_data.R` - Runs outbreak simulations for each school
 - `01-generate_reports.R` - Creates individual Word reports
-- `02-split_simulated_LHD.R` - Splits results by health district (optional)
+- `02-split_simulated_LHD.R` - Optional utility to split results by group/district
 - `params.yaml` - Model configuration parameters
 - `measles.qmd` - Report template
 - `letter_head.docx` - Your organization's letterhead (replace for production)
 
 ### Data Files
-- `school_vax_data.csv` - Your school vaccination data (you provide this)
+- `school_vax_data.csv` - Your school vaccination data with required columns: `school_name`, `school_id`, `vax_rate`, `pop_size`
 - `test_school_vax_data.csv` - Synthetic test data (included)
 
 ### Generated Output
 - `simulation_data.csv` - Simulation results
 - `reports/` - Generated Word document reports
+
+> **Note**: Looking for more advanced district-level grouping and analysis features? Check out the [v1.0 release](https://github.com/EpiForeSITE/measles-school-letters/releases/tag/v1.0) which includes additional functionality for combining and analyzing results by school district.
 
 ## Requirements
 

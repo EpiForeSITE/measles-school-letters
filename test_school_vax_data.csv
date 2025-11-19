@@ -1,6 +1,8 @@
 # This is only a test dataset.
 # Comments like these will be skipped when reading into R.
-SchoolID,Name,enrolled_students,Students up to date with MMR,Grade_level,school_district,Health District,PUBLIC/PRIVATE,Chartered?,inperson/online,Address,City,Zip Code,County,r_school_code
-S001,Test Elementary School,500,400,Elementary,Test District,Test Health District,PUBLIC,No,In person or hybrid,123 Main St,Test City,12345,Test County,T001
-S002,Demo Middle School,480,390,Middle,Test District,Test Health District,PUBLIC,No,In person or hybrid,456 Oak Ave,Test City,12346,Test County,T002
-S003,Sample High School,520,410,High,Demo District,Demo Health District,PRIVATE,No,In person or hybrid,789 Pine Rd,Demo City,12347,Demo County,T003
+# Required columns: school_name, school_id, vax_rate, pop_size
+# Optional columns: group (for organizing reports), template_path (custom letterhead)
+school_name,school_id,vax_rate,pop_size,group
+Test Elementary School,T001,0.80,500,Test Health District
+Demo Middle School,T002,0.81,480,Test Health District
+Sample High School,T003,0.79,520,Demo Health District

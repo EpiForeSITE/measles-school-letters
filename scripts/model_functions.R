@@ -9,7 +9,6 @@
 # the way in which these were structured.
 
 library(epiworldR)
-library(ggplot2)
 
 #' Build Measles School Model
 #'
@@ -268,38 +267,7 @@ shiny_measles <- function(input) {
   histories <- res_quarantine$total_hist
   histories_no_quarantine <- res_no_quarantine$total_hist
   
-  #plot_measles if output is a pdf using ggplot
-  plot_measles <- function() {
-    dat <- subset(histories, state %in% active_cases_statuses)
-    dat <- aggregate(counts ~ sim_num + date, data = dat, FUN = sum)
-    dat <- aggregate(counts ~ date, data = dat, FUN = function(x) {
-      c(p50 = quantile(x, .5), lower = quantile(x, .025), upper = quantile(x, .975))
-    })
-    dat <- cbind(data.frame(dat[[1]]), data.frame(dat[[2]]))
-    colnames(dat) <- c("date", "p50", "lower", "upper")
-    
-    dat_no_quarantine <- subset(histories_no_quarantine, state %in% active_cases_statuses)
-    dat_no_quarantine <- aggregate(counts ~ sim_num + date, data = dat_no_quarantine, FUN = sum)
-    dat_no_quarantine <- aggregate(
-      counts ~ date, 
-      data = dat_no_quarantine, 
-      FUN = function(x) {
-        c(p50 = quantile(x, .5), lower = quantile(x, .025), upper = quantile(x, .975))
-    })
-    dat_no_quarantine <- cbind(data.frame(dat_no_quarantine[[1]]), data.frame(dat_no_quarantine[[2]]))
-    colnames(dat_no_quarantine) <- c("date", "p50", "lower", "upper")
-    
-    ggplot() +
-      geom_ribbon(data = dat, aes(x = date, ymin = lower, ymax = upper), fill = "blue", alpha = 0.2) +
-      geom_line(data = dat, aes(x = date, y = p50), color = "blue") +
-      geom_ribbon(data = dat_no_quarantine, aes(x = date, ymin = lower, ymax = upper), fill = "red", alpha = 0.2) +
-      geom_line(data = dat_no_quarantine, aes(x = date, y = p50), color = "red") +
-      labs(x = "Date", y = "Active cases")
-  }
-  
-  
   list(
-    # epicurves_plot   = plot_measles(),
     summary_table    = tabulator(histories_no_quarantine, histories),
     hospitalizations = list(
       quarantine = analyze_hospitalizations(res_quarantine$transition),

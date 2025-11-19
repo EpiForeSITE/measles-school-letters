@@ -32,7 +32,7 @@ K_12_2ndMMR_data_set_for_2024_25 <- if (file.exists(test_data)) {
 # What column from `school_results` to use 
 # for organizing the reports. If none, the reports
 # will be placed in the root of the `reports` folder.
-folder_group <- "health_district"
+folder_group <- "group"
 
 # What to make red and bold
 # - The name of the entry is the pattern to find
@@ -49,12 +49,12 @@ red_and_bold <- c(
 
 # this is testing with synthetic data - adjust filter as needed for your use case
 test_school <- school_results %>% 
-  filter(!health_district %in% c("Reserved District 1", "Reserved District 2"))
+  filter(group != "")
   # Example of limiting to specific schools for testing:
   # filter(name %in% c("Test Elementary School", "Demo Middle School", "Sample High School"))
 
-# Checking if the dataset has the `letter_head` column
-has_letter_head <- "letter_head" %in% colnames(school_results)
+# Checking if the dataset has the `template_path` column
+has_template_path <- "template_path" %in% colnames(school_results)
 
 # Storing the old working directory
 olddir <- getwd()
@@ -92,8 +92,12 @@ for (i in seq_len(nrow(test_school))) {
     # Use the single qmd file
     qmd_file <- "measles.qmd"
     
-    # Use the default letterhead
-    selected_letter_head <- letter_head
+    # Use the default letterhead or school-specific one
+    selected_letter_head <- if (has_template_path && !is.na(school$template_path) && school$template_path != "") {
+      school$template_path
+    } else {
+      letter_head
+    }
     
     # Checking if we need to create the dir
     if (!dir.exists(report_dir))
