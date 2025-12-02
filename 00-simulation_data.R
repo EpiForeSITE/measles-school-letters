@@ -9,7 +9,7 @@
 #SBATCH --mail-user=george.vegayon@utah.edu
 #SBATCH --mail-type=ALL
 
-library(epiworldR)
+library(measles)
 library(dplyr)
 library(readr)
 library(stringr)
