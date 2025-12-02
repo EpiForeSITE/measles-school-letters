@@ -21,9 +21,8 @@ jobs:
 
     - name: Install R packages (measles and quarto)
       run: |
-        Rscript --vanilla -e 'install.packages("remotes")'
-        Rscript --vanilla -e 'remotes::install_github("UofUEpiBio/measles")'
-        install2.r quarto flextable
+        installGithub.r UofUEpiBio/measles
+        install2.r --error quarto flextable data.table
     
     - name: Run the simulations
       id: simulation
