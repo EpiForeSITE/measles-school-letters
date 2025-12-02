@@ -1,0 +1,15 @@
+FROM ghcr.io/rocker-org/devcontainer/tidyverse:4.5
+
+RUN apt-get update && apt-get install --no-install-recommends -y pre-commit nano
+
+RUN install2.r --error languageserver && \
+installGithub.r nx10/httpgd
+
+# Adding R packages
+RUN install2.r --error data.table
+
+RUN installGithub.r UofUEpiBio/epiworldR@copilot/remove-measles-models \
+  UofUEpiBio/measles
+
+
+CMD ["bash"]
