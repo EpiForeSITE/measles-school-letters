@@ -1,0 +1,9 @@
+Depends:
+  R (>= 4.1.0),
+  epiworldR (>= 0.10.0.1),
+  measles,
+  data.table,
+  ggplot2,
+Remotes:
+  UofUEpiBio/epiworldR@copilot/remove-measles-models
+  UofUEpiBio/measles

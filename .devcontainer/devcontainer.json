@@ -1,35 +1,36 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/cpp
 {
-  "name": "Measles School Simulation Template",
-  "build": {
-    "dockerfile": "Containerfile"
-  },
-  "features": {},
-  "customizations": {
-    "vscode": {
-      "extensions": [
-        "REditorSupport.r",
-        "quarto.quarto",
-        "ms-vscode.vscode-json",
-        "redhat.vscode-yaml",
-        "ms-toolsai.jupyter"
-      ],
-      "settings": {
-        "r.rterm.linux": "/usr/local/bin/R",
-        "r.rpath.linux": "/usr/local/bin/R",
-        "r.rterm.option": [
-          "--no-save",
-          "--no-restore"
-        ]
-      }
-    }
-  },
-  "forwardPorts": [8787],
-  "portsAttributes": {
-    "8787": {
-      "label": "RStudio Server",
-      "onAutoForward": "notify"
-    }
-  },
-  "postCreateCommand": "echo 'DevContainer ready! You can access RStudio Server at http://localhost:8787 (username: rstudio, password: rstudio)'",
-  "remoteUser": "rstudio"
+	"name": "Measles school letters",
+	"build": {
+		"dockerfile": "Containerfile"
+	},
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"reditorsupport.r",
+				"rdebugger.r-debugger",
+				"quarto.quarto",
+				"tianyishi.rmarkdown"
+			]
+		}
+	},
+	"mounts": [
+        // Mount the .vscode configuration into the container
+        "source=${localWorkspaceFolder}/.devcontainer/.vscode,target=/workspaces/${localWorkspaceFolderBasename}/.vscode,type=bind,consistency=cached"
+    ]
+	// Features to add to the dev container. More info: https://containers.dev/features.
+	// "features": {},
+
+	// Use 'forwardPorts' to make a list of ports inside the container available locally.
+	// "forwardPorts": [],
+
+	// Use 'postCreateCommand' to run commands after the container is created.
+	// "postCreateCommand": "gcc -v",
+
+	// Configure tool-specific properties.
+	// "customizations": {},
+
+	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
+	// "remoteUser": "root"
 }

@@ -9,7 +9,7 @@
 #SBATCH --mail-user=george.vegayon@utah.edu
 #SBATCH --mail-type=ALL
 
-library(epiworldR)
+library(measles)
 library(dplyr)
 library(readr)
 library(stringr)
@@ -43,7 +43,7 @@ test_data <- ifelse(
   ""
   ) 
 
-K_12_2ndMMR_data_set_for_2024_25 <- if (file.exists(test_data)) {
+school_data <- if (file.exists(test_data)) {
   read_csv(test_data, comment = "#") 
 } else {
   read_csv(
@@ -52,56 +52,42 @@ K_12_2ndMMR_data_set_for_2024_25 <- if (file.exists(test_data)) {
     )
 }
 
-school_duplicates <- K_12_2ndMMR_data_set_for_2024_25 %>% 
-  count(r_school_code, name = "n_levels")
+# Validate required columns
+required_cols <- c("school_name", "school_id", "vax_rate", "pop_size")
+missing_cols <- setdiff(required_cols, colnames(school_data))
+if (length(missing_cols) > 0) {
+  stop("Missing required columns: ", paste(missing_cols, collapse = ", "))
+}
 
-
-clean_data <-  K_12_2ndMMR_data_set_for_2024_25 %>%
-  left_join(school_duplicates, by = "r_school_code") %>%
-  group_by(r_school_code) %>%
-  summarise(
-    SchoolID = first(SchoolID), 
-    Name = first(Name),
-    `Population size` = sum(`enrolled_students`, na.rm = TRUE),
-    vaccinated_count = sum(`Students up to date with MMR`, na.rm = TRUE),
-    Grade_level = ifelse(n_distinct(Grade_level) > 1, "School", first(Grade_level)),
-    school_district = first(`school_district`),
-    health_district = first(`Health District`),
-    pub_priv = first(`PUBLIC/PRIVATE`),
-    charter = first(`Chartered?`),
-    `inperson/online` = first(`inperson/online`), 
-    Address = first(Address), 
-    City = first(City), 
-    zip_code = first(`Zip Code`),
-    County = first(County),
-    .groups = "drop"
+# Prepare school data with required and optional columns
+school_mmr_data <- school_data %>%
+  mutate(
+    name = school_name,
+    id_new = school_id,
+    `Population size` = pop_size,
+    `Vaccination rate` = vax_rate
   )
 
+# Add optional columns if they exist
+if ("group" %in% colnames(school_data)) {
+  school_mmr_data$group <- school_data$group
+} else {
+  school_mmr_data$group <- ""
+}
 
-#generate variable % of population with 2 dose mmr vaccinated
-school_mmr_data <- clean_data %>%
-  mutate(`Vaccination rate` = vaccinated_count / `Population size`,
-         name = str_to_title(Name)) %>%
-  #combined by school name and id (some are multiple)
-  # sprintf(
-  #   "%s_%s_%s_with_quarantine", id, r_school_code, grade
-  # )
-  mutate(
-    id_new = sprintf("%s_%s_%s", `SchoolID`, r_school_code, Grade_level)
-  ) %>%
-  filter(`Population size` > 10,
-         `inperson/online` == "In person or hybrid") %>%
-  select(id_new, r_school_code, SchoolID, Grade_level, name, `Population size`, vaccinated_count, `Vaccination rate`, City, zip_code, County, school_district, health_district, pub_priv, charter)
+if ("template_path" %in% colnames(school_data)) {
+  school_mmr_data$template_path <- school_data$template_path
+} else {
+  school_mmr_data$template_path <- "letter_head.docx"
+}
 
+school_mmr_data <- school_mmr_data %>%
+  select(id_new, name, `Population size`, `Vaccination rate`, group, template_path)
 
 # Checking that the ids are unique. If not, then throw an error
 if (any(duplicated(school_mmr_data$id_new))) {
   stop("Duplicate school IDs found. Please ensure each school has a unique ID.")
 }
-
-# Just keep schools with a vaccination rate greater than 30%
-school_mmr_data <- school_mmr_data %>%
-  filter(`Vaccination rate` >= .3)
 
 # Create simulation_data directory if it doesn't exist
 if (!dir.exists("simulation_data")) {
@@ -169,8 +155,8 @@ if (length(sims_to_do) != 0) {
     results <- with(tmp_env, list(
       id = school$id_new,
       name = school$name,
-      health_district = school$health_district,
-      letter_head = "(MS Word) Official DHHS Letterhead Gruber_Cox - Cannon.docx",
+      group = school$group,
+      template_path = school$template_path,
       vax_rate = parameters$`Vaccination rate`,
       pop_size = parameters$`Population size`,
       no_quarantine_mean_cases = results$takehome_stats$no_quarantine_mean_cases,

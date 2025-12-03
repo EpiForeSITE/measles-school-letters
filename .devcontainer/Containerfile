@@ -1,19 +1,15 @@
-FROM rocker/tidyverse:4.5.1
+FROM ghcr.io/rocker-org/devcontainer/tidyverse:4.5
 
-# Install system dependencies
-RUN apt-get update && apt-get install -y \
-    git \
-    make \
-    && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install --no-install-recommends -y pre-commit nano
 
-# Install R packages
-RUN R -e "install.packages(c('quarto', 'flextable', 'yaml', 'remotes'))"
+RUN install2.r --error languageserver && \
+installGithub.r nx10/httpgd
 
-# Install epiworldR from GitHub (development version)
-RUN R -e "remotes::install_github('UofUEpiBio/epiworldR', ref = 'patch-rename-measlesmodel')"
+# Adding R packages
+RUN install2.r --error data.table
 
-# Set working directory
-WORKDIR /workspace
+RUN installGithub.r UofUEpiBio/epiworldR@copilot/remove-measles-models \
+  UofUEpiBio/measles
 
-# Expose RStudio port
-EXPOSE 8787
+
+CMD ["bash"]

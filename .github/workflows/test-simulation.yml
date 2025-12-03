@@ -19,18 +19,12 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    - name: Downloading epiworldR repo
-      uses: actions/checkout@v4
-      with:
-        repository: UofUEpiBio/epiworldR
-        ref: patch-rename-measlesmodel
-        path: epiworldr-repo
-
-    - name: Install R packages (epiworldR and quarto)
+    - name: Install R packages (measles and quarto)
+      env:
+        GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        R CMD build --no-build-vignettes --no-manual epiworldr-repo
-        R CMD INSTALL epiworldR*.tar.gz
-        install2.r quarto flextable
+        installGithub.r UofUEpiBio/measles
+        install2.r --error quarto flextable data.table
     
     - name: Run the simulations
       id: simulation

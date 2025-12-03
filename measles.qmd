@@ -29,36 +29,6 @@ results <- read.csv("simulation_data.csv") |>
 # Add take-home message
 population <- results$pop_size
 prevalence <- results$vax_rate
-
-# Load appropriate data file based on environment
-# Loading the school data (checking if test data is used)
-test_data <- ifelse(
-  Sys.getenv("TEST_DATA", "FALSE") == "TRUE",
-  "./test_school_vax_data.csv",
-  ""
-  )
-
-data_file <- ifelse(
-  file.exists(test_data),
-  test_data,
-  "school_vax_data.csv"
-)
-
-K_12_2ndMMR_data_set_for_2024_25 <- read.csv(
-  data_file,
-  comment.char = "#"
-  )
-
-clean_data <-  K_12_2ndMMR_data_set_for_2024_25 %>%
-  group_by(r_school_code) %>%
-  mutate(Grade_level_new = ifelse(n_distinct(Grade_level) > 1,
-                                 "School", first(Grade_level)),
-         SchoolID = first(SchoolID)) %>%
-  ungroup() %>%
-  mutate(name = str_to_title(Name),
-         id_new = sprintf("%s_%s_%s", `SchoolID`, r_school_code, Grade_level_new)) %>%
-  subset(id_new == params$school_id)
-
 ```
 
 # Measles Estimation for `r results$name`
