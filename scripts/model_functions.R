@@ -39,7 +39,7 @@ library(epiworldR)
 #' An epiworldR model object configured for measles simulation in schools
 #' @export
 model_builder <- function(input, quarantine = TRUE) {
-  epiworldR::ModelMeaslesSchool(
+  measles::ModelMeaslesSchool(
     n                      = as.integer(input$`Population size`),
     contact_rate           = input$`Contact rate`,
     prevalence             = as.integer(input$Prevalence),
