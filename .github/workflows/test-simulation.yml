@@ -20,6 +20,8 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Install R packages (measles and quarto)
+      env:
+        GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
       run: |
         installGithub.r UofUEpiBio/measles
         install2.r --error quarto flextable data.table
