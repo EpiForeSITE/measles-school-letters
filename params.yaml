@@ -15,7 +15,7 @@ Population size: 190.0
 # Contacts per day. Package default: 15 / transmission_rate / prodromal_period.
 # 3.79 = 15 / 0.99 / 4, the epiworldRShiny default (R0 = 15 with transmission
 # 0.99 and a 4-day prodrome). With this file's transmission 0.9 and 3-day
-# prodrome the implied R0 is 0.9 * 3.79 * 3 = ~10.2. [assumption]
+# prodrome the implied R0 is 0.9 * 3.79 * 3 = ~10.2. Set by our Utah DHHS colleagues. [assumption]
 Contact rate: 3.79
 # Probability of accepting quarantine. Assumption (field experience);
 # same as package default. [assumption]
@@ -28,14 +28,14 @@ Incubation period: 12.0
 # about 2 days to notification. Same as package default. [assumption]
 Days undetected: 2.0
 # Infectious prodromal period (days). Package default: 4. Utah DHHS: prodrome
-# lasts 2-4 days (range 2-8). Rationale for 3 (vs package 4) pending. [verified range, pending rationale]
+# lasts 2-4 days (range 2-8). Set by our Utah DHHS colleagues for the letters. [verified range, assumption]
 Prodromal period: 3.0
 # Quarantine of unvaccinated exposed students (days). Utah DHHS: 21 days since
 # last exposure. Same as package default. Set to -1 (off) in the no-quarantine scenario. [verified]
 Quarantine days: 21.0
 # Rash period (days) in which cases can be hospitalized or detected. Package
 # default: 3. Utah DHHS: contagious to 4 days after rash onset. Rationale for
-# 4 (vs package 3) pending. [verified range, pending rationale]
+# 4 (vs package 3): set by our Utah DHHS colleagues for the letters. [verified range, assumption]
 Rash period: 4.0
 # Transmission probability per contact. Assumption: highly transmissible;
 # Utah DHHS: "90% of susceptible contacts will develop disease". Same as package default. [assumption, verified]
