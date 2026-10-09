@@ -5,61 +5,59 @@
 # models are in the measles R package:
 #   https://github.com/UofUEpiBio/measles/blob/main/inst/extdata/measles_parameters.csv
 #   https://github.com/UofUEpiBio/measles/blob/main/vignettes/parameters.qmd
-# Status: [verified] checked against the cited source; [assumption] team
-# assumption confirmed by the authors; [pending] source or rationale pending.
 # Utah DHHS = Utah DHHS Measles Disease Plan (updated March 26, 2026),
 #   https://epi.utah.gov/wp-content/uploads/Measles-disease-plan.pdf
 
-# Scenario input, replaced per school by `pop_size` in the school data. [assumption]
+# Scenario input, replaced per school by `pop_size` in the school data.
 Population size: 190.0
 # Contacts per day. Package default: 15 / transmission_rate / prodromal_period.
 # 3.79 = 15 / 0.99 / 4, the epiworldRShiny default (R0 = 15 with transmission
 # 0.99 and a 4-day prodrome). With this file's transmission 0.9 and 3-day
-# prodrome the implied R0 is 0.9 * 3.79 * 3 = ~10.2. Set by our Utah DHHS colleagues. [assumption]
+# prodrome the implied R0 is 0.9 * 3.79 * 3 = ~10.2. Set by our Utah DHHS colleagues.
 Contact rate: 3.79
 # Probability of accepting quarantine. Assumption (field experience);
-# same as package default. [assumption]
+# same as package default.
 Quarantine willingness: 1.0
-# Number of index cases at the start of the simulation. Same as package default. [assumption]
+# Number of index cases at the start of the simulation. Same as package default.
 Prevalence: 1
-# Days from exposure to prodrome. Utah DHHS: averages 8-12 days. Same as package default. [verified]
+# Days from exposure to prodrome. Utah DHHS: averages 8-12 days. Same as package default.
 Incubation period: 12.0
 # Average days from rash onset to detection by public health. Assumption:
-# about 2 days to notification. Same as package default. [assumption]
+# about 2 days to notification. Same as package default.
 Days undetected: 2.0
 # Infectious prodromal period (days). Package default: 4. Utah DHHS: prodrome
-# lasts 2-4 days (range 2-8). Set by our Utah DHHS colleagues for the letters. [verified range, assumption]
+# lasts 2-4 days (range 2-8). Set by our Utah DHHS colleagues for the letters.
 Prodromal period: 3.0
 # Quarantine of unvaccinated exposed students (days). Utah DHHS: 21 days since
-# last exposure. Same as package default. Set to -1 (off) in the no-quarantine scenario. [verified]
+# last exposure. Same as package default. Set to -1 (off) in the no-quarantine scenario.
 Quarantine days: 21.0
 # Rash period (days) in which cases can be hospitalized or detected. Package
 # default: 3. Utah DHHS: contagious to 4 days after rash onset. Rationale for
-# 4 (vs package 3): set by our Utah DHHS colleagues for the letters. [verified range, assumption]
+# 4 (vs package 3): set by our Utah DHHS colleagues for the letters.
 Rash period: 4.0
 # Transmission probability per contact. Assumption: highly transmissible;
-# Utah DHHS: "90% of susceptible contacts will develop disease". Same as package default. [assumption, verified]
+# Utah DHHS: "90% of susceptible contacts will develop disease". Same as package default.
 Transmission rate: 0.9
 # Daily RATE (not a probability) of hospitalization during the rash period.
 # Same as package default. Started at 20% as a conservative value agreed with
 # Utah DHHS; Jones et al. 2026, NEJM Evid (https://doi.org/10.1056/EVIDpha2600141)
 # report 8-9% in Utah. Probability = h / (h + 1/rash) = 0.2 / (0.2 + 1/4) = ~0.44
-# here (~0.375 with the package's 3-day rash). [verified, assumption]
+# here (~0.375 with the package's 3-day rash).
 Hospitalization rate: 0.2
 # Days in hospital. Assumption; same as package default. Observed stays are
-# shorter (Jones et al. 2026: mean 2.1 nights in Utah). [assumption]
+# shorter (Jones et al. 2026: mean 2.1 nights in Utah).
 Hospitalization days: 7
 # Days a detected case stays isolated. Utah DHHS: isolate until 4 days after
-# rash onset. Same as package default. [verified]
+# rash onset. Same as package default.
 Isolation days: 4
 # Scenario input, replaced per school by `vax_rate` in the school data.
-# Package default: 1 - 1/15 (herd-immunity threshold). [assumption]
+# Package default: 1 - 1/15 (herd-immunity threshold).
 Vaccination rate: 0.4210526
 # NOT USED: measles >= 0.10.0 ignores this argument (it warns and passes 0). Kept
-# for backward compatibility. [verified]
+# for backward compatibility.
 Vax improved recovery: 0.5
 # Efficacy of 2 doses of MMR. Utah DHHS ("~97%"); CDC,
-# https://www.cdc.gov/measles/about/questions.html. Same as package default. [verified]
+# https://www.cdc.gov/measles/about/questions.html. Same as package default.
 Vax efficacy: 0.97
 # NOT USED by the model (legacy key). The model starts from `Prevalence`.
 initial number of exposed: 1.0
