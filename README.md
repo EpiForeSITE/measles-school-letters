@@ -67,7 +67,7 @@ For technical details about the workflow, data formats, and implementation, see 
 
 ## Parameters & references
 
-The model is `ModelMeaslesSchool()` from the [`measles`](https://github.com/UofUEpiBio/measles) R package. Its parameters are set in [`params.yaml`](params.yaml), which has a source comment for each value, and passed to the model by `model_builder()` in [`scripts/model_functions.R`](scripts/model_functions.R). Every parameter is passed explicitly, so none falls back silently to a package default. The table lists each one with its source.
+The model is `ModelMeaslesSchool()` from the [`measles`](https://github.com/UofUEpiBio/measles) R package. Its parameters are set in [`params.yaml`](params.yaml), which has a source comment for each value, and passed to the model by `model_builder()` in [`scripts/model_functions.R`](scripts/model_functions.R). Every parameter is passed explicitly. The table lists each one with its source.
 
 Canonical values and sources for all measles models: [`measles_parameters.csv`](https://github.com/UofUEpiBio/measles/blob/main/inst/extdata/measles_parameters.csv) and the [Parameters and literature references](https://github.com/UofUEpiBio/measles/blob/main/vignettes/parameters.qmd) vignette (also available in R as `measles::measles_parameters()`).
 
