@@ -86,6 +86,8 @@ Each simulation uses parameters from `params.yaml`:
 - Intervention parameters (quarantine compliance, isolation periods)
 - Hospitalization parameters (rate, duration)
 
+For every parameter's value and its source, see [Parameters & references](../README.md#parameters--references) in the README.
+
 #### Parallel Processing
 
 The simulation supports parallel processing:

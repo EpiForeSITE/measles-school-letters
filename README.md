@@ -65,6 +65,38 @@ Each report includes:
 
 For technical details about the workflow, data formats, and implementation, see our [technical documentation](docs/details.md).
 
+## Parameters & references
+
+The model is `ModelMeaslesSchool()` from the [`measles`](https://github.com/UofUEpiBio/measles) R package. Its parameters are set in [`params.yaml`](params.yaml), which has a source comment for each value, and passed to the model by `model_builder()` in [`scripts/model_functions.R`](scripts/model_functions.R). Every parameter is passed explicitly. The table lists each one with its source.
+
+Canonical values and sources for all measles models: [`measles_parameters.csv`](https://github.com/UofUEpiBio/measles/blob/main/inst/extdata/measles_parameters.csv) and the [Parameters and literature references](https://github.com/UofUEpiBio/measles/blob/main/vignettes/parameters.qmd) vignette (also available in R as `measles::measles_parameters()`).
+
+| Parameter | Value used | Source |
+|---|---|---|
+| Population size (`n`) | Per school (`pop_size`); 190 in `params.yaml` is a placeholder | Scenario input: your school data. Replaced for each school. |
+| Vaccination rate (`prop_vaccinated`) | Per school (`vax_rate`); 0.42 in `params.yaml` is a placeholder | Scenario input: your school MMR data. Replaced for each school. |
+| Prevalence (`prevalence`) | 1 | Scenario input. One index case per simulation. |
+| R0 (target) | 15 (not read by the model) | Guerra et al. 2017, *Lancet Infect Dis*, [doi:10.1016/S1473-3099(17)30307-9](https://doi.org/10.1016/S1473-3099(17)30307-9). The `R0` key in `params.yaml` is for reference only; R0 enters the model through the contact rate. With the values used here, the implied R0 is about 10.2 (see contact rate). |
+| Transmission rate (`transmission_rate`) | 0.9 | Assumption: highly transmissible. [Utah DHHS Measles Disease Plan][udhhs]: "90% of susceptible contacts will develop disease". |
+| Contact rate (`contact_rate`) | 3.79 per day | Assumption. Copied from the [epiworldRShiny](https://github.com/UofUEpiBio/epiworldRShiny) measles app default, calibrated to R0 = 15 as 15 / 0.99 / 4 (transmission 0.99, 4-day prodrome). In `ModelMeaslesSchool` only prodromal agents transmit, so R0 = transmission × contact rate × prodromal period; with this repo's transmission (0.9) and prodrome (3 days), that gives 0.9 × 3.79 × 3 ≈ 10.2, not 15. Kept so that letters already sent stay reproducible. |
+| Incubation period (`incubation_period`) | 12 days | [Utah DHHS plan][udhhs]: exposure to prodrome averages 8–12 days. |
+| Prodromal period (`prodromal_period`) | 3 days | Assumption; within the [Utah DHHS plan][udhhs] range (prodrome lasts 2–4 days, range 2–8). |
+| Rash period (`rash_period`) | 4 days | Assumption. [Utah DHHS plan][udhhs]: contagious to 4 days after rash onset. In this model, agents with rash do not transmit; the rash period sets how long a case can be detected or hospitalized. |
+| Days undetected (`days_undetected`) | 2 days | Assumption: about 2 days from active case to public health notification. |
+| Hospitalization rate (`hospitalization_rate`) | 0.2 per day (a daily rate, not a probability; p = h / (h + 1/rash) = 0.2 / (0.2 + 1/4) ≈ 0.44) | Assumption. Recent analyses use 10%, following Jones et al. 2026, *NEJM Evid* ([doi:10.1056/EVIDpha2600141](https://doi.org/10.1056/EVIDpha2600141)), who report 8% overall and 9% among unvaccinated people in Utah; Wang et al. 2026, *MMWR* ([doi:10.15585/mmwr.mm7520a1](https://doi.org/10.15585/mmwr.mm7520a1)) report 18.5% in West Texas. The hospitalization numbers in the letters are therefore conservative (high). |
+| Hospitalization period (`hospitalization_period`) | 7 days | Assumption. Observed stays are shorter (mean 2.1 nights in Utah, Jones et al. 2026); the letters count admissions, so this value does not change the reported numbers. |
+| Quarantine period (`quarantine_period`) | 21 days (quarantine scenario); −1, meaning off (no-quarantine scenario) | [Utah DHHS plan][udhhs]: 21 days since last exposure. Each school is simulated with and without quarantine. |
+| Quarantine willingness (`quarantine_willingness`) | 1.0 | Assumption. Some analyses use 0.9. |
+| Isolation period (`isolation_period`) | 4 days | [Utah DHHS plan][udhhs]: isolate until 4 days after rash onset. |
+| Vaccine efficacy (`vax_efficacy`) | 0.97 (2 doses of MMR) | [Utah DHHS plan][udhhs] ("~97%"); [CDC](https://www.cdc.gov/measles/about/questions.html). |
+| Vax improved recovery (`vax_improved_recovery`) | 0.5 (ignored) | Not active: removed in measles 0.10.0, which warns and ignores it. Still passed for backward compatibility. |
+| `initial number of exposed` (`params.yaml` key) | 1.0 (not used) | Legacy key that is never passed to the model. The initial cases come from `Prevalence`. |
+| Post-exposure prophylaxis (PEP) | Not used | This template does not model PEP (`InterventionMeaslesPEP`). |
+
+[udhhs]: https://epi.utah.gov/wp-content/uploads/Measles-disease-plan.pdf
+
+Simulation settings (not epidemiological parameters): `Seed` 2023, `N days` 100, `Replicates` 500 per scenario, `Threads` 2.
+
 ## Using the Makefile
 
 This repository includes a Makefile to simplify common tasks. **Note**: GNU Make is not required - you can run the R scripts directly if preferred.
@@ -105,7 +137,7 @@ Both approaches produce identical results - choose whichever is more convenient 
 - `00-simulation_data.R` - Runs outbreak simulations for each school
 - `01-generate_reports.R` - Creates individual Word reports
 - `02-split_simulated_LHD.R` - Optional utility to split results by group/district
-- `params.yaml` - Model configuration parameters
+- `params.yaml` - Model configuration parameters (see [Parameters & references](#parameters--references))
 - `measles.qmd` - Report template
 - `letter_head.docx` - Your organization's letterhead (replace for production)
 
