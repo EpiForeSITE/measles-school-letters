@@ -22,17 +22,20 @@ library(epiworldR)
 #'   - `Prevalence`: Integer, initial number of infected students
 #'   - `Transmission rate`: Numeric, probability of transmission per contact
 #'   - `Vax efficacy`: Numeric, vaccine efficacy (0-1)
-#'   - `Vax improved recovery`: Numeric, vaccination effect on recovery
+#'   - `Vax improved recovery`: Numeric, ignored by measles >= 0.10.0 (kept for compatibility)
 #'   - `Incubation period`: Numeric, days in incubation period
 #'   - `Prodromal period`: Numeric, days in prodromal period
-#'   - `Rash period`: Numeric, days with visible rash
+#'   - `Rash period`: Numeric, average days in the rash state (not infectious in this model)
 #'   - `Days undetected`: Numeric, days infectious before detection
-#'   - `Hospitalization rate`: Numeric, probability of hospitalization
+#'   - `Hospitalization rate`: Numeric, daily rate (not a probability) of hospitalization during rash
 #'   - `Hospitalization days`: Numeric, length of hospital stay
 #'   - `Vaccination rate`: Numeric, proportion of students vaccinated (0-1)
 #'   - `Quarantine days`: Integer, length of quarantine period
 #'   - `Quarantine willingness`: Numeric, compliance rate for quarantine (0-1)
 #'   - `Isolation days`: Integer, length of isolation period
+#'
+#'   Values and sources are documented in the "Parameters & references" table
+#'   in README.md.
 #' @param quarantine Logical, whether to enable quarantine interventions (default: TRUE)
 #'
 #' @returns
